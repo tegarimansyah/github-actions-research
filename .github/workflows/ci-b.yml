@@ -1,0 +1,29 @@
+name: Push to packages b
+on:
+  pull_request:
+  push:
+    branches: ['main']
+    paths:
+      - 'packages/b/**/*'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('package-lock.json') }}
+      - name: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: echo "Cache not hitted, installing dependency"
+      - name: npm build
+        run: echo "Build package b"
+      - name: deploy
+        run: | 
+          echo "rsync to server"
+          echo "install node modules"
+          echo "pm2 reload app-b"
