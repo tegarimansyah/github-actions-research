@@ -1,6 +1,5 @@
 name: Push to packages a
 on:
-  pull_request:
   push:
     branches: ['main']
     paths:
@@ -19,7 +18,10 @@ jobs:
           key: cache-node-modules-${{ hashFiles('package-lock.json') }}
       - name: npm ci
         if: steps.cache.outputs.cache-hit != 'true'
-        run: echo "Cache not hitted, installing dependency"
+        run: |
+          echo "Cache not hitted, installing dependency"
+          mkdir -p node_modules
+          touch "node_modules/$(date)"
       - name: npm build
         run: echo "Build package a"
       - name: deploy
